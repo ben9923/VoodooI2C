@@ -100,9 +100,6 @@ private:
     int last_finger_count;
     IOWorkLoop* work_loop;
     IOCommandGate* command_gate;
-
-    int factor_x;
-    int factor_y;
     
     void constructReportGated(VoodooI2CMultitouchEvent& multitouch_event, AbsoluteTime& timestamp);
 };

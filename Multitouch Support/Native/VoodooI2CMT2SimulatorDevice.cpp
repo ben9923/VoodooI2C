@@ -87,15 +87,15 @@ void VoodooI2CMT2SimulatorDevice::constructReportGated(VoodooI2CMultitouchEvent&
             input_active = true;
         }
 
-        MAGIC_TRACKPAD_INPUT_REPORT_FINGER& finger_data = input_report.FINGERS[i];
+        MAGIC_TRACKPAD_INPUT_REPORT_FINGER & finger_data = input_report.FINGERS[i];
         
         SInt16 x_min = 3678;
         SInt16 y_min = 2479;
         
-        IOFixed scaled_x = (((transducer->coordinates.x.value() / factor_x) * 1.0f) / engine->interface->logical_max_x) * 7612;
-        IOFixed scaled_y = (((transducer->coordinates.y.value() / factor_y) * 1.0f) / engine->interface->logical_max_y) * 5065;
+        IOFixed scaled_x = ((transducer->coordinates.x.value() * 1.0f) / engine->interface->logical_max_x) * 7612;
+        IOFixed scaled_y = ((transducer->coordinates.y.value() * 1.0f) / engine->interface->logical_max_y) * 5065;
         
-        IOFixed scaled_old_x = (((transducer->coordinates.x.last.value / factor_x )* 1.0f) / engine->interface->logical_max_x) * 7612;
+        IOFixed scaled_old_x = ((transducer->coordinates.x.last.value * 1.0f) / engine->interface->logical_max_x) * 7612;
         uint8_t scaled_old_x_truncated = scaled_old_x;
         
         new_touch_state[i]++;
@@ -285,15 +285,6 @@ bool VoodooI2CMT2SimulatorDevice::start(IOService* provider) {
     PMinit();
     engine->parent->joinPMtree(this);
     registerPowerDriver(this, VoodooI2CIOPMPowerStates, kVoodooI2CIOPMNumberPowerStates);
-
-    factor_x = engine->interface->logical_max_x / engine->interface->physical_max_x;
-    factor_y = engine->interface->logical_max_y / engine->interface->physical_max_y;
-
-    if (!factor_x)
-        factor_x = 1;
-
-    if (!factor_y)
-        factor_y = 1;
 
     ready_for_reports = true;
     
